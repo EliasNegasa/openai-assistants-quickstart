@@ -96,7 +96,11 @@ const Chat = ({
         }),
       }
     );
+    console.log("SEND MESSAGE", response.body);
+    
     const stream = AssistantStream.fromReadableStream(response.body);
+    console.log("STREAM", stream);
+    
     handleReadableStream(stream);
   };
 
@@ -135,11 +139,15 @@ const Chat = ({
 
   // textCreated - create new assistant message
   const handleTextCreated = () => {
+    console.log("TEXT CREATED");
+    
     appendMessage("assistant", "");
   };
 
   // textDelta - append text to last assistant message
   const handleTextDelta = (delta) => {
+    console.log("TEXT DELTA");
+
     if (delta.value != null) {
       appendToLastMessage(delta.value);
     };
@@ -155,12 +163,16 @@ const Chat = ({
 
   // toolCallCreated - log new tool call
   const toolCallCreated = (toolCall) => {
+    console.log("TOOL CALL CREATED");
+
     if (toolCall.type != "code_interpreter") return;
     appendMessage("code", "");
   };
 
   // toolCallDelta - log delta and snapshot for the tool call
   const toolCallDelta = (delta, snapshot) => {
+    console.log("TOOL CALL DELTA");
+    
     if (delta.type != "code_interpreter") return;
     if (!delta.code_interpreter.input) return;
     appendToLastMessage(delta.code_interpreter.input);
@@ -170,6 +182,8 @@ const Chat = ({
   const handleRequiresAction = async (
     event: AssistantStreamEvent.ThreadRunRequiresAction
   ) => {
+    console.log("REQUIRE ACTION");
+    
     const runId = event.data.id;
     const toolCalls = event.data.required_action.submit_tool_outputs.tool_calls;
     // loop over tool calls and call function handler
